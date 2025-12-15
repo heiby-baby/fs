@@ -1,0 +1,24 @@
+cat > ~/check_display.sh << 'EOF'
+#!/bin/bash
+echo "=== ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ ==="
+echo "WAYLAND_DISPLAY: $WAYLAND_DISPLAY"
+echo "XDG_SESSION_TYPE: $XDG_SESSION_TYPE"
+echo "DISPLAY: $DISPLAY"
+echo "QT_QPA_PLATFORM: $QT_QPA_PLATFORM"
+echo ""
+echo "=== ПРОЦЕССЫ ==="
+ps aux | grep -E "(Xwayland|gnome-bluetooth|blueman)" | grep -v grep
+echo ""
+echo "=== СОКЕТЫ ==="
+ls -la $XDG_RUNTIME_DIR/wayland* 2>/dev/null || echo "Нет wayland сокетов"
+echo ""
+echo "=== ЗАПУСК ТЕСТА ==="
+if [ -n "$WAYLAND_DISPLAY" ]; then
+    echo "Wayland окружение настроено"
+    echo "Попробуйте: blueman-manager"
+else
+    echo "Wayland окружение НЕ настроено"
+    echo "Вы не в Wayland сессии!"
+fi
+EOF
+chmod +x ~/check_display.sh
