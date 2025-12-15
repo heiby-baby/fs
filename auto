@@ -1,0 +1,46 @@
+# Создайте скрипт автозапуска
+cat > ~/.config/hypr/autostart.sh << 'EOF'
+#!/bin/bash
+# Автозапуск приложений для Hyprland
+
+# Подождать немного перед запуском
+sleep 1
+
+# Запуск панели (если установлена Waybar)
+if command -v waybar &> /dev/null; then
+    waybar &
+fi
+
+# Менеджер сети
+if command -v nm-applet &> /dev/null; then
+    nm-applet --indicator &
+fi
+
+# Bluetooth
+if command -v blueman-applet &> /dev/null; then
+    blueman-applet &
+fi
+
+# Polkit агент
+if [ -f /usr/lib/polkit-kde-authentication-agent-1 ]; then
+    /usr/lib/polkit-kde-authentication-agent-1 &
+fi
+
+# Обои
+if command -v swaybg &> /dev/null && [ -f ~/.config/hypr/wallpaper.jpg ]; then
+    swaybg -i ~/.config/hypr/wallpaper.jpg &
+fi
+
+# Уведомления
+if command -v dunst &> /dev/null; then
+    dunst &
+fi
+
+# Запуск сервисов
+systemctl --user start pipewire pipewire-pulse wireplumber
+systemctl --user start xdg-desktop-portal xdg-desktop-portal-hyprland
+
+echo "Autostart completed!"
+EOF
+
+chmod +x ~/.config/hypr/autostart.sh
